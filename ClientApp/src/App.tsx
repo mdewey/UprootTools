@@ -10,7 +10,7 @@ import './custom.scss'
 import { CurrentMoveContext } from './context/MoveContext'
 
 const App = () => {
-  const [currentMove, setCurrentMove] = useState({})
+  const [currentMove, setCurrentMove] = useState()
 
   return (
     <CurrentMoveContext.Provider value={{ currentMove, setCurrentMove }}>
