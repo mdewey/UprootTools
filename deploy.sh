@@ -1,8 +1,8 @@
-docker build -t UprootTools-image .
+docker build -t uproot-tools-image .
 
-docker tag UprootTools-image registry.heroku.com/UprootTools/web
+docker tag uproot-tools-image registry.heroku.com/uproot-tools/web
 
 
-docker push registry.heroku.com/UprootTools/web
+docker push registry.heroku.com/uproot-tools/web
 
-heroku container:release web -a UprootTools
+heroku container:release web -a uproot-tools
