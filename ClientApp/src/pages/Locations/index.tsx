@@ -7,16 +7,22 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Icon from '@material-ui/core/Icon'
 import ReactMapGL, { Marker } from 'react-map-gl'
-
-import { ILocation } from './ILocation'
+import HouseIcon from '@material-ui/icons/House'
+import { PointOfInterest } from './PointOfInterest'
+import { House } from './House'
 
 export default () => {
   const Star = () => <Icon>star</Icon>
+  const House = () => <HouseIcon />
   const classes = useStyles()
   const context = useCurrentMove()
   const move = context.currentMove
-  const [pois, setPois] = useState<Array<ILocation>>([])
+  const [pois, setPois] = useState<Array<PointOfInterest>>([])
   const [newPoi, setNewPoi] = useState({})
+
+  const [houses, setHouses] = useState<Array<House>>([])
+  const [newHouse, setNewHouse] = useState({})
+
   const [viewport, setViewport] = useState({
     width: '100vw',
     height: '50vh',
@@ -45,12 +51,37 @@ export default () => {
     setPois(p => [...p, resp.data])
   }
 
+  const setNewHouseData = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target
+    setNewHouse(prev => {
+      return {
+        ...prev,
+        [name]: value,
+      }
+    })
+  }
+
+  const sendHouseToApi = async () => {
+    const resp = await axios.post('/api/House', {
+      ...newHouse,
+      moveId: move.id,
+    })
+    setHouses(p => [...p, resp.data])
+  }
+
   useEffect(() => {
     const getData = async () => {
       const resp = await axios.get('/api/PointOfInterest')
       setPois(resp.data)
     }
     getData()
+    const getHouses = async () => {
+      const resp = await axios.get('/api/House')
+      setHouses(resp.data)
+    }
+    getHouses()
   }, [])
 
   useEffect(() => {
@@ -102,21 +133,88 @@ export default () => {
           </Button>
         </form>
       </Paper>
+      <Paper elevation={3} className={classes.main}>
+        <h4>add a House</h4>
+        <form className={classes.form} noValidate autoComplete="off">
+          <span className={classes.input}>
+            <TextField
+              id="outlined-basic"
+              label="Name"
+              variant="outlined"
+              name="name"
+              onChange={setNewHouseData}
+            />
+          </span>
+          <span className={classes.input}>
+            <TextField
+              className={classes.input}
+              id="outlined-basic"
+              label="Full Address"
+              variant="outlined"
+              name="address"
+              onChange={setNewHouseData}
+            />
+          </span>
+          <span className={classes.input}>
+            <TextField
+              className={classes.input}
+              id="outlined-basic"
+              label="Url"
+              variant="outlined"
+              name="url"
+              onChange={setNewHouseData}
+            />
+          </span>
+          <span className={classes.input}>
+            <TextField
+              className={classes.input}
+              id="outlined-basic"
+              label="Notes"
+              variant="outlined"
+              name="notes"
+              onChange={setNewHouseData}
+            />
+          </span>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            endIcon={<House />}
+            onClick={sendHouseToApi}
+          >
+            Add
+          </Button>
+        </form>
+      </Paper>
 
       <ReactMapGL
         {...viewport}
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         onViewportChange={(viewport: any) => setViewport({ ...viewport })}
       >
-        {pois.map((place: ILocation) => {
+        {pois.map((place: PointOfInterest) => {
           return (
             <Marker
+              key={place.id}
               latitude={place.latitude}
               longitude={place.longitude}
               offsetLeft={-20}
               offsetTop={-10}
             >
               <Star />
+            </Marker>
+          )
+        })}
+        {houses.map((place: House) => {
+          return (
+            <Marker
+              key={place.id}
+              latitude={place.latitude}
+              longitude={place.longitude}
+              offsetLeft={-20}
+              offsetTop={-10}
+            >
+              <House />
             </Marker>
           )
         })}
