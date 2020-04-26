@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using UprootTools.Models;
 
 namespace UprootTools.Controllers
@@ -14,10 +17,12 @@ namespace UprootTools.Controllers
   public class PointOfInterestController : ControllerBase
   {
     private readonly DatabaseContext _context;
+    private readonly string _MAPBOX_TOKEN;
 
-    public PointOfInterestController(DatabaseContext context)
+    public PointOfInterestController(DatabaseContext context, IConfiguration config)
     {
       _context = context;
+      this._MAPBOX_TOKEN = config["mapbox_token"];
     }
 
     // GET: api/PointOfInterst
@@ -79,8 +84,25 @@ namespace UprootTools.Controllers
     [HttpPost]
     public async Task<ActionResult<PointOfInterest>> PostPointOfInterest(PointOfInterest pointOfInterest)
     {
+      var client = new HttpClient();
+      var resp = await client.GetAsync($"https://api.mapbox.com/geocoding/v5/mapbox.places/{pointOfInterest.Address}.json?access_token={this._MAPBOX_TOKEN}");
+
+      var json = await JsonDocument.ParseAsync(await resp.Content.ReadAsStreamAsync());
+      var root = json.RootElement;
+      var feature = root.GetProperty("features").EnumerateArray().First();
+      var center = feature.GetProperty("center").EnumerateArray();
+      var lng = center.First();
+      var lat = center.Skip(1).First();
+
+      Console.WriteLine($"{lat},{lng}");
+      pointOfInterest.Latitude = lat.GetDouble();
+      pointOfInterest.Longitude = lng.GetDouble();
+
+
+
       _context.PointsOfInterest.Add(pointOfInterest);
       await _context.SaveChangesAsync();
+
 
       return CreatedAtAction("GetPointOfInterest", new { id = pointOfInterest.Id }, pointOfInterest);
     }
