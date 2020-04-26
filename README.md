@@ -1,3 +1,5 @@
+Photo by Vlad Bagacian on Unsplash
+
 # SDG Console template
 
 This is the template app SDG uses to start off learning C# and .NET

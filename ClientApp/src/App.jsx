@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Route, Switch } from 'react-router'
 import { Layout } from './components/Layout'
-import { Home } from './pages/Home'
+import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import './custom.scss'
 export default class App extends Component {
