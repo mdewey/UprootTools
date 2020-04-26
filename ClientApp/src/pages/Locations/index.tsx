@@ -48,7 +48,6 @@ export default () => {
     <>
       <ul>
         <li> - add house</li>
-        <li> - add POI </li>
         <li>- see on map</li>
       </ul>
       <Paper elevation={3} className={classes.main}>
