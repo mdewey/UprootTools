@@ -6,14 +6,20 @@ import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Icon from '@material-ui/core/Icon'
-
+import ReactMapGL from 'react-map-gl'
 export default () => {
   const classes = useStyles()
   const context = useCurrentMove()
   const move = context.currentMove
 
   const [newPoi, setNewPoi] = useState({})
-
+  const [viewport, setViewport] = useState({
+    width: '100vw',
+    height: '50vh',
+    latitude: 27.7676,
+    longitude: -82.6403,
+    zoom: 8,
+  })
   const setNewPoiData = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -83,6 +89,12 @@ export default () => {
           </Button>
         </form>
       </Paper>
+
+      <ReactMapGL
+        {...viewport}
+        mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+        onViewportChange={(viewport: any) => setViewport({ ...viewport })}
+      />
     </>
   )
 }
