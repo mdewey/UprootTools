@@ -6,12 +6,16 @@ import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Icon from '@material-ui/core/Icon'
-import ReactMapGL from 'react-map-gl'
+import ReactMapGL, { Marker } from 'react-map-gl'
+
+import { ILocation } from './ILocation'
+
 export default () => {
+  const Star = () => <Icon>star</Icon>
   const classes = useStyles()
   const context = useCurrentMove()
   const move = context.currentMove
-  const [pois, setPois] = useState([])
+  const [pois, setPois] = useState<Array<ILocation>>([])
   const [newPoi, setNewPoi] = useState({})
   const [viewport, setViewport] = useState({
     width: '100vw',
@@ -38,6 +42,7 @@ export default () => {
       moveId: move.id,
     })
     console.log(resp.data)
+    setPois(p => [...p, resp.data])
   }
 
   useEffect(() => {
@@ -90,7 +95,7 @@ export default () => {
             variant="contained"
             color="primary"
             className={classes.button}
-            endIcon={<Icon>star</Icon>}
+            endIcon={<Star />}
             onClick={sendPoiToApi}
           >
             Add
@@ -102,7 +107,20 @@ export default () => {
         {...viewport}
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         onViewportChange={(viewport: any) => setViewport({ ...viewport })}
-      ></ReactMapGL>
+      >
+        {pois.map((place: ILocation) => {
+          return (
+            <Marker
+              latitude={place.latitude}
+              longitude={place.longitude}
+              offsetLeft={-20}
+              offsetTop={-10}
+            >
+              <Star />
+            </Marker>
+          )
+        })}
+      </ReactMapGL>
     </>
   )
 }
