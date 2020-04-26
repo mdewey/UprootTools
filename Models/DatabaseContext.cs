@@ -11,6 +11,7 @@ namespace UprootTools.Models
   {
     public DbSet<Move> Moves { get; set; }
     public DbSet<PointOfInterest> PointsOfInterest { get; set; }
+    public DbSet<House> Houses { get; set; }
   }
 
 
