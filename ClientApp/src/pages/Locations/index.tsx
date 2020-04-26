@@ -11,7 +11,7 @@ export default () => {
   const classes = useStyles()
   const context = useCurrentMove()
   const move = context.currentMove
-
+  const [pois, setPois] = useState([])
   const [newPoi, setNewPoi] = useState({})
   const [viewport, setViewport] = useState({
     width: '100vw',
@@ -39,6 +39,14 @@ export default () => {
     })
     console.log(resp.data)
   }
+
+  useEffect(() => {
+    const getData = async () => {
+      const resp = await axios.get('/api/PointOfInterest')
+      setPois(resp.data)
+    }
+    getData()
+  }, [])
 
   useEffect(() => {
     if (!move) {
@@ -94,7 +102,7 @@ export default () => {
         {...viewport}
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
         onViewportChange={(viewport: any) => setViewport({ ...viewport })}
-      />
+      ></ReactMapGL>
     </>
   )
 }

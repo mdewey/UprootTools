@@ -29,7 +29,7 @@ namespace UprootTools.Controllers
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PointOfInterest>>> GetPointsOfInterest()
     {
-      return await _context.PointsOfInterest.ToListAsync();
+      return await _context.PointsOfInterest.Where(w => w.Latitude != 0 && w.Longitude != 0).ToListAsync();
     }
 
     // GET: api/PointOfInterst/5
