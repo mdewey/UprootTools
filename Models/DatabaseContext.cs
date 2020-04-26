@@ -5,11 +5,17 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace UprootTools.Models
 {
+
+
   public partial class DatabaseContext : DbContext
   {
+    public DbSet<Move> Moves { get; set; }
+    public DbSet<PointOfInterest> PointsOfInterest { get; set; }
+  }
 
 
-
+  public partial class DatabaseContext : DbContext
+  {
 
     private string ConvertPostConnectionToConnectionString(string connection)
     {
