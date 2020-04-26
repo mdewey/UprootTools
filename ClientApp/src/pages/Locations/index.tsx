@@ -96,10 +96,6 @@ export default () => {
 
   return (
     <>
-      <ul>
-        <li> - add house</li>
-        <li>- see on map</li>
-      </ul>
       <Paper elevation={3} className={classes.main}>
         <h4>add a POI</h4>
         <form className={classes.form} noValidate autoComplete="off">
